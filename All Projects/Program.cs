@@ -271,8 +271,10 @@ public class Program
             Console.Write("Choose one of them >> ");
             var nationOption = Console.ReadLine();
             var nation = String.Empty;
+            Console.Clear();
 
-            if(nationOption == "1")
+
+            if (nationOption == "1")
             {
                 nation = "Uzbek";
             }
@@ -286,18 +288,21 @@ public class Program
             }
 
             Console.Write("\tPLAN\n");
-            Console.WriteLine("1. Add Restaurant!\t 2. Add Food!");
-            Console.WriteLine("3. Get by ID of Restaurant!\t 4. Get by ID of Food");
-            Console.WriteLine("5. Delete Restaurant!\t 6. Delete Food");
-            Console.WriteLine("7. Update Restaurant!\t 8. Update Food");
-            Console.WriteLine("9. Get all Foods\t 10. Get Food By Nation");
-            Console.WriteLine("11. Comments of Food\t 12. Negative comments of Food");
-            Console.WriteLine("13. Add comments for Food!\t 14. Add negative comments for food!");
-            Console.WriteLine("15. Add Amount of People for eating!\n");
+            Console.WriteLine("1. Add Restaurant!                    2. Add Food!");
+            Console.WriteLine("3. Get by ID of Restaurant!           4. Get by ID of Food");
+            Console.WriteLine("5. Delete Restaurant!                 6. Delete Food");
+            Console.WriteLine("7. Update Restaurant!                 8. Update Food");
+            Console.WriteLine("9. Get all Foods                      10. Get Food By Nation");
+            Console.WriteLine("11. Comments of Food                  12. Negative comments of Food");
+            Console.WriteLine("13. Add comments for Food!            14. Add negative comments for food!");
+            Console.WriteLine("15. Add Amount of People for eating!  16.Get Most Negative Food");
+            Console.WriteLine("17.Get All Restaruants                18.Get Most Eaten Food");
+
             Console.Write("Choose one of them >> ");
             var option = Console.ReadLine();
+            Console.Clear();
 
-            if(option == "1")
+            if (option == "1")
             {
 
                 var newRestaurant = new Restaurant();
@@ -398,11 +403,342 @@ public class Program
                     {
                         str += typeOfFood + " ";
                     }
-
+                    str += "\nNegative Comments: ";
+                    foreach(var negCom in result.NegativComments)
+                    {
+                        str += negCom + " ";
+                    }
                     Console.Write($"Result >> {str}");
                 }
+            }else if(option == "5")
+            {
+                Console.Write("Enter restaurant ID to delete >> ");
+                var resID = Guid.Parse(Console.ReadLine());
+
+                var result = restaurantService.DeleteRestaurant(resID);
+                if(result is true)
+                {
+                    Console.WriteLine("Restaurant has been removed succesfully!!!");
+                }
+                else
+                {
+                    Console.WriteLine("ERROR! Not Deleted!");
+                }
+            }else if(option == "6")
+            {
+                Console.Write("Enter food ID to delete >> ");
+                var fooID = Guid.Parse(Console.ReadLine());
+
+                var result = foodService.DeletedFood(fooID);
+                if (result is true)
+                {
+                    Console.WriteLine("Food has been removed succesfully!!!");
+                }
+                else
+                {
+                    Console.WriteLine("ERROR! Not Deleted!");
+                }
+            }else if(option == "7")
+            {
+                var restObj = new Restaurant();
+
+                Console.Write("Enter restaurant ID to update >> ");
+                var resID = Guid.Parse(Console.ReadLine());
+
+                Console.Write("Enter restaurant name to update >> ");
+                restObj.Name = Console.ReadLine();
+
+                Console.Write("Enter restaurant Location to update >> ");
+                restObj.Location = Console.ReadLine();
+
+                Console.Write("Enter restaurant Description to update >> ");
+                restObj.Description = Console.ReadLine();
+
+                Console.Write("Enter restaurant Opened_Date to update >> ");
+                restObj.Opened_Date = DateTime.Parse(Console.ReadLine());
+
+                Console.Write("Enter Nation_of_restaurant to update >> ");
+                restObj.Nation_of_restaurant = Console.ReadLine();
+
+
+                var result = restaurantService.UpdatingRestaurant(resID, restObj);
+                if(result is true)
+                {
+                    Console.WriteLine("Restaurant has been updated successfully!!!");
+                }
+                else
+                {
+                    Console.WriteLine("ERROR! Not updated");
+                }
             }
+            else if(option == "8")
+            {
+
+                var typeOfFood = new Food();
+
+                Console.Write("Enter Food ID to update >> ");
+                var foodID = Guid.Parse(Console.ReadLine());
+
+                Console.Write("Enter Food ID to update >> ");
+                typeOfFood.Name = Console.ReadLine();
+
+                Console.Write("Enter NationOfFood to update >> ");
+                typeOfFood.NationOfFood = Console.ReadLine();
+
+                Console.Write("Enter Performance to update >> ");
+                typeOfFood.Performance = Double.Parse(Console.ReadLine());
+
+                Console.Write("Enter AmountOfPeopleForEating to update >> ");
+                typeOfFood.AmountOfPeopleForEating = int.Parse(Console.ReadLine());
+
+                Console.Write("Enter amount of comments >> ");
+                var comments = int.Parse(Console.ReadLine());
+
+                for(var i = 0; i < comments; i++)
+                {
+                    Console.Write("Enter comment >> ");
+                    var comMent = Console.ReadLine();
+
+                    typeOfFood.CommentOfFood.Add(comMent);
+                }
+
+                Console.Write("Enter amount of negative comments >> ");
+                var negComments = int.Parse(Console.ReadLine());
+
+                for(var i = 0; i < negComments; i++)
+                {
+                    Console.Write("Enter comment >> ");
+                    var commeNt = Console.ReadLine();
+
+                    typeOfFood.NegativComments.Add(commeNt);
+                }
+
+                var secondResult = foodService.UpdatedFood(foodID, typeOfFood);
+                if (secondResult is true)
+                {
+                    Console.WriteLine("Food has been updted successfully!!!");
+                }
+                else
+                {
+                    Console.WriteLine("ERROR!!!");
+                }
+
+            }else if(option == "9")
+            {
+                var collection = foodService.GetAllFood();
+
+                foreach(var food in collection)
+                {
+                    var str = $"ID: {food.Id}, Name: {food.Name}, Nation: {food.NationOfFood}, Performance: {food.AmountOfPeopleForEating}, " +
+                        $"Comments >> ";
+
+                    foreach(var comment in food.CommentOfFood)
+                    {
+                        str += comment + " ";
+                    }
+
+                    str += "\nNegative Comments >> ";
+
+                    foreach(var negComment in food.NegativComments)
+                    {
+                        str += negComment + " ";
+                    }
+                    if(str is null)
+                    {
+                        Console.WriteLine("Error!");
+                    }
+                    else
+                    {
+                        Console.WriteLine(str);
+                        Console.WriteLine();
+                    }
+                }
+            }else if(option == "10")
+            {
+                var foodByNation = restaurantService.GetAllFoodsByNation(nation);
+                if (foodByNation is null)
+                {
+                    Console.WriteLine("ERROR!!!");
+                }
+                else
+                {
+                    foreach(var result in foodByNation)
+                    {
+                        var str = $"Food ID: {result.Id}\n Food name: {result.Name}\n " +
+                        $"Food NationOfFood: {result.NationOfFood}\n Food Performance: " +
+                        $"{result.Performance}\n Food AmountOfPeopleForEating: {result.AmountOfPeopleForEating}\n " +
+                        $"CommentOfFood: ";
+
+                        foreach (var typeOfFood in result.CommentOfFood)
+                        {
+                            str += typeOfFood + " ";
+                        }
+                        str += "\nNegative Comments: ";
+                        foreach (var negCom in result.NegativComments)
+                        {
+                            str += negCom + " ";
+                        }
+                        Console.Write($"Result >> {str}");
+                    }
+                }
+            }else if(option == "11")
+            {
+                Console.Write("Enter food's ID >> ");
+                var comID = Guid.Parse(Console.ReadLine());
+
+                var result = foodService.GetById(comID);
+                if(result is null)
+                {
+                    Console.WriteLine("Error!");
+                }
+                else
+                {
+                    var str = "CommentOfFood: ";
+
+                    foreach (var typeOfFood in result.CommentOfFood)
+                    {
+                        str += typeOfFood + " ";
+                    }
+                    Console.Write($"Result >> {str}");
+                }
+
+            }else if(option == "12")
+            {
+                Console.Write("Enter food's ID >> ");
+                var comID = Guid.Parse(Console.ReadLine());
+
+                var result = foodService.GetById(comID);
+                if (result is null)
+                {
+                    Console.WriteLine("Error!");
+                }
+                else
+                {
+                    var str = "Negative CommentOfFood: ";
+
+                    foreach (var typeOfFood in result.NegativComments)
+                    {
+                        str += typeOfFood + " ";
+                    }
+                    Console.Write($"Result >> {str}");
+                }
+            }else if(option == "13")
+            {
+                Console.Write("Enter food ID >> ");
+                var commentsID = Guid.Parse(Console.ReadLine());
+                Console.Write("Enter comment >> ");
+                var secondComment = Console.ReadLine();
+
+                var result = foodService.AddCommetForFood(commentsID, secondComment);
+                if(result is false)
+                {
+                    Console.WriteLine("ERROR");
+                }
+                else
+                {
+                    Console.WriteLine("Added successfully!!!");
+                }
+
+            }else if(option == "14")
+            {
+                Console.Write("Enter food ID >> ");
+                var commentsID = Guid.Parse(Console.ReadLine());
+                Console.Write("Enter negative comment >> ");
+                var secondComment = Console.ReadLine();
+
+                var result = foodService.AddNegativeCommetForFood(commentsID, secondComment);
+                if (result is false)
+                {
+                    Console.WriteLine("ERROR");
+                }
+                else
+                {
+                    Console.WriteLine("Added successfully!!!");
+                }
+            }else if(option == "15")
+            {
+                Console.Write("Enter food's ID >> ");
+                var foodID = Guid.Parse(Console.ReadLine());
+
+                Console.Write("Enter amount of people >> ");
+                var amauntOfPeople = int.Parse(Console.ReadLine());
+
+                var result = foodService.AddPeopleForEating(foodID, amauntOfPeople);
+
+                if(result is false)
+                {
+                    Console.WriteLine("Error");
+                }
+                else
+                {
+                    Console.WriteLine("Result >> Added successfully");
+                }
+
+
+            }else if(option == "16")
+            {
+                var result = foodService.GetMostNegCommentedFood();
+
+                if(result is null)
+                {
+                    Console.WriteLine("Error");
+                }
+                else
+                {
+                    var str = String.Empty;
+                    str += "\nNegative Comments: ";
+                    foreach (var negCom in result.NegativComments)
+                    {
+                        str += negCom + " ";
+                    }
+                    Console.Write($"Result >> {str}");
+                }
+
+            }else if(option == "17")
+            {
+                var res = restaurantService.GetAllRestaurants();
+
+                if(res is null)
+                {
+                    Console.WriteLine("Error");
+                }
+                else
+                {
+                    foreach(var result in res)
+                    {
+                        var str = $"Restaurant ID: {result.Id}\n Restaurant name: {result.Name}\n " +
+    $"Restaurant location: {result.Location}\n Restaurant description: " +
+    $"{result.Description}\n Restaurant Opened_Date: {result.Opened_Date}\n Restaurant nation_of_restaurant: {result.Nation_of_restaurant}";
+
+                        Console.WriteLine(str);
+                    }
+                }
+
+            }else if(option == "18")
+            {
+                var result = foodService.GetMostEatenFood();
+
+                var str = $"Food ID: {result.Id}\n Food name: {result.Name}\n " +
+                        $"Food NationOfFood: {result.NationOfFood}\n Food Performance: " +
+                        $"{result.Performance}\n Food AmountOfPeopleForEating: {result.AmountOfPeopleForEating}\n " +
+                        $"CommentOfFood: ";
+
+                foreach (var typeOfFood in result.CommentOfFood)
+                {
+                    str += typeOfFood + " ";
+                }
+                str += "\nNegative Comments: ";
+                foreach (var negCom in result.NegativComments)
+                {
+                    str += negCom + " ";
+                }
+                Console.Write($"Result >> {str}");
+
+            }
+            Console.ReadKey();
+            Console.Clear();
         }
+        
     }
 }
 //public Guid Id { get; set; }

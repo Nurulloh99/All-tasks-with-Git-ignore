@@ -15,6 +15,7 @@ public class Food_service
     public Food_service()
     {
         ListedFood = new List<Food>();
+        DataSeed();
     }
 
 
@@ -99,6 +100,26 @@ public class Food_service
 
 
 
+    public bool AddNegativeCommetForFood(Guid IdForComment, string addingComment)
+    {
+        var findFood = GetById(IdForComment);
+
+        if (findFood is null)
+        {
+            return false;
+        }
+
+        var index = ListedFood.IndexOf(findFood);
+        ListedFood[index].NegativComments.Add(addingComment);
+        return true;
+    }
+
+
+
+
+
+
+
     public bool AddPeopleForEating(Guid Id, int people)
     {
         var findFood = GetById(Id);
@@ -129,4 +150,69 @@ public class Food_service
         }
         return collectOfNegComments;
     }
+
+
+
+
+    public Food GetMostEatenFood()
+    {
+        var responce = new Food();
+
+        foreach(var food in ListedFood)
+        {
+            if(food.AmountOfPeopleForEating > responce.AmountOfPeopleForEating)
+            {
+                responce = food;
+            }
+        }
+        return responce;
+    }
+
+
+
+    public void DataSeed()
+    {
+        var food1 = new Food
+        {
+            Id = Guid.NewGuid(),
+            Name = "Sushi",
+            NationOfFood = "Uzbek",
+            CommentOfFood = new List<string> { "Fresh", "Delicious", "Healthy" },
+            Performance = 4.5,
+            AmountOfPeopleForEating = 2,
+            NegativComments = new List<string> { "Expensive", "Too raw for some" }
+        };
+
+        var food2 = new Food
+        {
+            Id = Guid.NewGuid(),
+            Name = "Tacos",
+            NationOfFood = "Turkish",
+            CommentOfFood = new List<string> { "Spicy", "Tasty", "Affordable" },
+            Performance = 4.0,
+            AmountOfPeopleForEating = 4,
+            NegativComments = new List<string> { "Can be messy", "Too greasy" }
+        };
+
+        var food3 = new Food
+        {
+            Id = Guid.NewGuid(),
+            Name = "Pizza",
+            NationOfFood = "Europian",
+            CommentOfFood = new List<string> { "Cheesy", "Flavorful", "Comforting" },
+            Performance = 4.7,
+            AmountOfPeopleForEating = 3,
+            NegativComments = new List<string> { "Caloric", "Too much cheese" }
+        };
+
+        ListedFood.Add(food2);
+        ListedFood.Add(food3);
+        ListedFood.Add(food1);
+
+    }
+
+
+
+
+
 }
