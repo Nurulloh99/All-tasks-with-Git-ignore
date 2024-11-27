@@ -9,7 +9,9 @@ public class Program
 {
     static void Main(string[] args)
     {
-        SecondFrontEnd();
+        
+
+
     }
 
     public static void RunFrontEnd()
@@ -252,9 +254,6 @@ public class Program
             Console.Clear();
         }
     }
-
-
-
 
     public static void SecondFrontEnd()
     {
@@ -740,20 +739,9 @@ public class Program
         }
         
     }
+
+
+    
+
+
 }
-//public Guid Id { get; set; }
-//public string Name { get; set; }
-//public string Location { get; set; }
-//public string Description { get; set; }
-//public DateTime Opened_Date { get; set; } = DateTime.Now;
-//public string Nation_of_restaurant { get; set; }
-
-
-//public Guid Id { get; set; }
-//public string Name { get; set; }
-//public string NationOfFood { get; set; }
-//public List<string> CommentOfFood { get; set; } = new List<string>();
-//public double Performance { get; set; }
-//public int AmountOfPeopleForEating { get; set; }
-//public List<string> NegativComments { get; set; } = new List<string>();
-
