@@ -1,6 +1,7 @@
 ﻿using CRUD_Post.Models;
 using CRUD_Post.Services;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.Xml.Linq;
 
 namespace CRUD_Post;
@@ -9,10 +10,47 @@ public class Program
 {
     static void Main(string[] args)
     {
-        
 
 
     }
+
+
+    public static string RemoveFirstSalom(string str)
+    {
+        var copy = str.Substring(0, 5);
+        if(copy is "salom")
+        {
+            str = str.Remove(0, copy.Length);
+        }
+        return str;
+    }
+
+
+    public static int CollectFiveUpperLetter(List<string> text)
+    {
+        var counter = 0;
+        var secondCounter = 0;
+
+        for (var i = 0; i < text.Count; i++)
+        {
+            counter = 0;
+            for (var j = 0; j < text[i].Length; i++)
+            {
+                if (Char.IsUpper(text[i][j])){
+                    counter++;
+                }
+            }
+            if (counter == 5)
+            {
+                secondCounter++;
+            }
+        }
+        
+        return secondCounter;
+    }
+
+
+
 
     public static void RunFrontEnd()
     {
