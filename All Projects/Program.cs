@@ -11,42 +11,347 @@ public class Program
     static void Main(string[] args)
     {
 
+        RunBooksFrontEnd();
 
     }
 
 
-    public static string RemoveFirstSalom(string str)
+    public static void RunBooksFrontEnd()
     {
-        var copy = str.Substring(0, 5);
-        if(copy is "salom")
+
+        while (true)
         {
-            str = str.Remove(0, copy.Length);
-        }
-        return str;
-    }
 
+            var bookServices = new Book_service();
 
-    public static int CollectFiveUpperLetter(List<string> text)
-    {
-        var counter = 0;
-        var secondCounter = 0;
-
-        for (var i = 0; i < text.Count; i++)
-        {
-            counter = 0;
-            for (var j = 0; j < text[i].Length; i++)
+            while (true)
             {
-                if (Char.IsUpper(text[i][j])){
-                    counter++;
+
+                Console.WriteLine("1. Add book");
+                Console.WriteLine("2. Delete book");
+                Console.WriteLine("3. Update book");
+                Console.WriteLine("4. Get by Id of book");
+                Console.WriteLine("5. Get all books");
+                Console.WriteLine("6. Get expensive book");
+                Console.WriteLine("7. Get most paged book");
+                Console.WriteLine("8. Get most read book");
+                Console.WriteLine("9. Get books by reader name");
+                Console.WriteLine("10. Get books by author name");
+                Console.WriteLine("11. Add reader to book");
+                Console.WriteLine("12. Add author to book");
+                Console.WriteLine();
+                Console.Write("Enter your option >> "); 
+                var option = int.Parse(Console.ReadLine());
+
+
+                if (option == 1)
+                {
+                    var bookResult = new Book();
+
+                    Console.Write("Enter the book's name >> ");
+                    bookResult.Name = Console.ReadLine();
+
+                    Console.Write("Enter publication date >> ");
+                    bookResult.PublicationDate = DateTime.Parse(Console.ReadLine());
+
+                    Console.Write("Enter description >> ");
+                    bookResult.Description = Console.ReadLine();
+
+                    Console.Write("Enter the page number >> ");
+                    bookResult.PageNumber = int.Parse(Console.ReadLine());
+
+                    Console.Write("Enter price of the book >> ");
+                    bookResult.Price = Double.Parse(Console.ReadLine());
+
+                    Console.Write("Enter authors count >> ");
+                    var authorCount = int.Parse(Console.ReadLine());
+                    for (var i = 0; i < authorCount; i++)
+                    {
+                        Console.Write("Enter author name >> ");
+                        bookResult.AuthorsName.Add(Console.ReadLine());
+                    }
+
+                    Console.Write("Enter reader count >> ");
+                    var readerCount = int.Parse(Console.ReadLine());
+                    for (var i = 0; i < readerCount; i++)
+                    {
+                        Console.Write("Enter reader name >> ");
+                        bookResult.ReadersName.Add(Console.ReadLine());
+                    }
+
+                    bookServices.AddBook(bookResult);
                 }
-            }
-            if (counter == 5)
-            {
-                secondCounter++;
+                if(option is 2)
+                {
+                    Console.Write("Enter book's Id >> ");
+                    var bookID = Guid.Parse(Console.ReadLine());
+
+                    var result = bookServices.DeleteBook(bookID);
+                    
+                    if(result is false)
+                    {
+                        Console.WriteLine("Not deleted");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Deleted successfully!");
+                    }
+
+                }
+                else if(option is 3)
+                {
+                    var bookResult = new Book();
+
+                    Console.Write("Enter Id of the book >> ");
+                    bookResult.Id = Guid.Parse(Console.ReadLine());
+
+                    Console.Write("Enter the book's name >> ");
+                    bookResult.Name = Console.ReadLine();
+
+                    Console.Write("Enter publication date >> ");
+                    bookResult.PublicationDate = DateTime.Parse(Console.ReadLine());
+
+                    Console.Write("Enter description >> ");
+                    bookResult.Description = Console.ReadLine();
+
+                    Console.Write("Enter the page number >> ");
+                    bookResult.PageNumber = int.Parse(Console.ReadLine());
+
+                    Console.Write("Enter price of the book >> ");
+                    bookResult.Price = Double.Parse(Console.ReadLine());
+
+                    Console.Write("Enter authors count >> ");
+                    var authorCount = int.Parse(Console.ReadLine());
+                    for (var i = 0; i < authorCount; i++)
+                    {
+                        Console.Write("Enter author name >> ");
+                        bookResult.AuthorsName.Add(Console.ReadLine());
+                    }
+
+                    Console.Write("Enter reader count >> ");
+                    var readerCount = int.Parse(Console.ReadLine());
+                    for (var i = 0; i < readerCount; i++)
+                    {
+                        Console.Write("Enter reader name >> ");
+                        bookResult.ReadersName.Add(Console.ReadLine());
+                    }
+
+                    var result = bookServices.UpdateBook(bookResult);
+
+                    if(result is false)
+                    {
+                        Console.WriteLine("Book is not updated");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Updated successfully!");
+                    }
+                }
+                else if(option is 4)
+                {
+                    Console.Write("Enter Id of the book >> ");
+                    var bookId = Guid.Parse(Console.ReadLine());
+
+                    var result = bookServices.GetById(bookId);
+                    if(result is null)
+                    {
+                        Console.WriteLine("Error occured");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Here you go!!!");
+                    }
+                }
+                else if(option is 5)
+                {
+                    var books = bookServices.GetAllBooks();
+
+                    foreach(var book in books)
+                    {
+                        var str = $"Name: {book.Name}\n Publicated date: {book.PublicationDate}\n " +
+                            $"Description: {book.Description}\n Page number: {book.PageNumber}\n Rate of the book: {book.Price}" +
+                            $"Authors name >> ";
+                        foreach(var authorName in book.AuthorsName)
+                        {
+                            str += authorName + " ";
+                        }
+
+                        str += "Reader name >> ";
+
+                        foreach(var readerName in book.ReadersName)
+                        {
+                            str += readerName + " ";
+                        }
+                    }
+
+                }
+                else if (option is 6)
+                {
+                    var book = bookServices.GetExpensiveBook();
+
+                    var str = $"Name: {book.Name}\n Publication date: {book.PublicationDate}\n Description: {book.Description}\n " +
+                        $"Page number: {book.PageNumber}\n Rate of the book: {book.Price}\n" +
+                        $"Author names >> ";
+                    
+                    foreach(var resOfBook in book.AuthorsName)
+                    {
+                        str += resOfBook + " ";
+                    }
+
+                    str += "Reader names >> ";
+
+                    foreach(var readerName in book.ReadersName)
+                    {
+                        str += readerName + " ";
+                    }
+                }
+                else if(option is 7)
+                {
+                    var book = bookServices.GetMostPagedBook();
+
+                    var str = $"Name: {book.Name}\n Publication date: {book.PublicationDate}\n Description: {book.Description}\n Page number: {book.PageNumber}\n " +
+                        $"Rate of the book: {book.Price}\n Author names >> ";
+                    foreach(var authorName in book.AuthorsName)
+                    {
+                        str += authorName + " ";
+                    }
+                    str += "Reader name >> ";
+                    foreach(var readerName in book.ReadersName)
+                    {
+                        str += readerName + " ";
+                    }
+                }
+                else if(option is 8)
+                {
+                    var book = bookServices.GetMostReadBook();
+
+                    var str = $"Name: {book.Name}\n Publication date: {book.PublicationDate}\n Description: {book.Description}\n Page number: {book.PageNumber}\n " +
+                        $"Rate of the book: {book.Price}\n Author names >> ";
+                    foreach(var authorName in book.AuthorsName)
+                    {
+                        str += authorName + " ";
+                    }
+                    str += "Reader names >> ";
+                    foreach(var readerNames in book.ReadersName)
+                    {
+                        str += readerNames + " ";
+                    }
+                }
+                else if(option is 8)
+                {
+                    Console.Write("Enter reader name >> ");
+                    var books = bookServices.GetBooksByReaderName(Console.ReadLine());
+
+                    foreach (var book in books)
+                    {
+                        var str = $"Name: {book.Name}\n Publicated date: {book.PublicationDate}\n " +
+                            $"Description: {book.Description}\n Page number: {book.PageNumber}\n Rate of the book: {book.Price}" +
+                            $"Authors name >> ";
+                        foreach (var authorName in book.AuthorsName)
+                        {
+                            str += authorName + " ";
+                        }
+
+                        str += "Reader name >> ";
+
+                        foreach (var readerName in book.ReadersName)
+                        {
+                            str += readerName + " ";
+                        }
+                    }
+                }
+                else if(option is 10)
+                {
+                    Console.Write("Enter author name >> ");
+                    var books = bookServices.GetBooksByAuthorName(Console.ReadLine());
+
+                    foreach (var book in books)
+                    {
+                        var str = $"Name: {book.Name}\n Publicated date: {book.PublicationDate}\n " +
+                            $"Description: {book.Description}\n Page number: {book.PageNumber}\n Rate of the book: {book.Price}" +
+                            $"Authors name >> ";
+                        foreach (var authorName in book.AuthorsName)
+                        {
+                            str += authorName + " ";
+                        }
+
+                        str += "Reader name >> ";
+
+                        foreach (var readerName in book.ReadersName)
+                        {
+                            str += readerName + " ";
+                        }
+                    }
+                }
+                else if(option is 11)
+                {
+                    Console.Write("Enter book's ID >> ");
+                    var booksId = Guid.Parse(Console.ReadLine());
+
+                    Console.Write("Enter reader name >> ");
+                    var readerName = Console.ReadLine();
+
+                    var result = bookServices.AddReaderToBook(booksId, readerName);
+
+                    if(result is false)
+                    {
+                        Console.WriteLine("Not added or error occured stupid");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Added successfully!!!");
+                    }
+                }
+                else if(option is 12)
+                {
+                    Console.Write("Enter book's ID >> ");
+                    var booksId = Guid.Parse(Console.ReadLine());
+
+                    Console.Write("Enter author name >> ");
+                    var authorName = Console.ReadLine();
+
+                    var result = bookServices.AddAuthorToBook(booksId, authorName);
+
+                    if (result is false)
+                    {
+                        Console.WriteLine("Not added or error occured stupid");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Added successfully!!!");
+                    }
+                }
+
+
+                
+
+                
+
+
+                
+
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
             }
         }
-        
-        return secondCounter;
+
+
+
+
+
+
     }
 
 
@@ -777,6 +1082,50 @@ public class Program
         }
         
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     

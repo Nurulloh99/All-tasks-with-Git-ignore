@@ -9,31 +9,29 @@ namespace CRUD_Post.Services;
 
 public class Book_service
 {
-    private List<Book> ListedBooks;
+
+    private static List<Book> ListedBook;
 
     public Book_service()
     {
-        ListedBooks = new List<Book>();
-        DataSeed();
+        ListedBook = new List<Book>();
     }
 
 
     public Book AddBook(Book book)
     {
         book.Id = Guid.NewGuid();
-        ListedBooks.Add(book);
+        ListedBook.Add(book);
 
         return book;
     }
 
 
-
-
-    public Book GetById(Guid bookID)
+    public Book GetById(Guid bookId)
     {
-        foreach(var book in ListedBooks)
+        foreach(var book in ListedBook)
         {
-            if(book.Id == bookID)
+            if(book.Id == bookId)
             {
                 return book;
             }
@@ -42,21 +40,13 @@ public class Book_service
     }
 
 
-
-    public bool DeleteBook(Guid bookID)
+    public List<Book> GetAllBooks()
     {
-        var bookId = GetById(bookID);
-
-        if(bookId is null)
-        {
-            return false;
-        }
-        ListedBooks.Remove(bookId);
-        return true;
+        return ListedBook;
     }
 
 
-    public bool UpdatedBook(Guid bookId, Book book)
+    public bool DeleteBook(Guid bookId)
     {
         var foundBook = GetById(bookId);
 
@@ -65,196 +55,143 @@ public class Book_service
             return false;
         }
 
-        var index = ListedBooks.IndexOf(foundBook);
-        ListedBooks[index] = book;
+        ListedBook.Remove(foundBook);
         return true;
     }
 
 
-
-    public List<Book> GetAllBooks()
+    public bool UpdateBook(Book book)
     {
-        return ListedBooks;
+        var foundBook = GetById(book.Id);
+
+        if(foundBook is null)
+        {
+            return false;
+        }
+
+        var index = ListedBook.IndexOf(foundBook);
+        ListedBook[index] = book;
+        return true;
     }
 
 
-
+    // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
 
     public Book GetExpensiveBook()
     {
-        var bookResponce = new Book();
+        var resultOfBook = new Book();
 
-        foreach(var book in ListedBooks)
+        foreach(var book in ListedBook)
         {
-            if(book.Price > bookResponce.Price)
+            if(book.Price > resultOfBook.Price)
             {
-                bookResponce = book;
+                resultOfBook = book;
             }
         }
-        return bookResponce;
+        return resultOfBook;
     }
 
 
 
     public Book GetMostPagedBook()
     {
-        var bookPage = new Book();
+        var resultOfBook = new Book();
 
-        foreach(var book in ListedBooks)
+        foreach(var book in ListedBook)
         {
-            if(book.PageNumber > bookPage.PageNumber)
+            if(book.PageNumber > resultOfBook.PageNumber)
             {
-                bookPage = book;
+                resultOfBook = book;
             }
         }
-        return bookPage;
+        return resultOfBook;
     }
 
 
 
-    public Book GetMostReadBook()  
+    public Book GetMostReadBook()
     {
-        var mostReadBook = new Book();
+        var resultOfBook = new Book();
 
-        foreach(var book in ListedBooks)
+        foreach(var book in ListedBook)
         {
-            if(book.ReaderName.Count > mostReadBook.ReaderName.Count)
+            if(book.ReadersName.Count > resultOfBook.ReadersName.Count)
             {
-                mostReadBook = book;
+                resultOfBook = book;
             }
         }
-        return mostReadBook;
+        return resultOfBook;
     }
+
 
 
 
     public List<Book> GetBooksByReaderName(string readerName)
     {
-        var reader = new List<Book>();
+        var Books = new List<Book>();
 
-        foreach(var book in ListedBooks)
+        foreach(var book in ListedBook)
         {
-            if (book.ReaderName.Contains(readerName))
+            if (book.ReadersName.Contains(readerName))
             {
-                reader.Add(book);
+                Books.Add(book);
             }
         }
-        return reader;
+        return Books;
     }
 
-    
+
+
 
 
     public List<Book> GetBooksByAuthorName(string authorName)
     {
-        var author = new List<Book>();
+        var resultOfBooks = new List<Book>();
 
-        foreach(var book in ListedBooks)
+        foreach(var book in ListedBook)
         {
             if (book.AuthorsName.Contains(authorName))
             {
-                author.Add(book);
+                resultOfBooks.Add(book);
             }
         }
-        return author;
+        return resultOfBooks;
     }
 
-    
+
+
+
 
     public bool AddReaderToBook(Guid bookId, string readerName)
     {
-        var foundBook = GetById(bookId);
+        var resultOfBook = new Book();
 
-        if(foundBook is null)
+        if(resultOfBook is null)
         {
             return false;
         }
 
-        var index = ListedBooks.IndexOf(foundBook);
-        ListedBooks[index].ReaderName.Add(readerName);
+        var index = ListedBook.IndexOf(resultOfBook);
+        ListedBook[index].ReadersName.Add(readerName);
         return true;
     }
+
 
 
 
     public bool AddAuthorToBook(Guid bookId, string authorName)
     {
-        var foundBook = GetById(bookId);
+        var resultOfBook = new Book();
 
-        if(foundBook is null)
+        if(resultOfBook is null)
         {
             return false;
         }
 
-        var index = ListedBooks.IndexOf(foundBook);
-        ListedBooks[index].AuthorsName.Add(authorName);
+        var index = ListedBook.IndexOf(resultOfBook);
+        ListedBook[index].AuthorsName.Add(authorName);
         return true;
     }
 
-
-
-
-
-    public void DataSeed()
-    {
-        var firstSeed = new Book()
-        {
-            Id = Guid.NewGuid(),
-            Title = "The Great Adventure",
-            PublicationDate = new DateTime(2020, 6, 15),
-            Description = "A thrilling adventure of a group of explorers discovering hidden treasures.",
-            PageNumber = 350,
-            Price = 19.99,
-            AuthorsName = new List<string> { "John Doe", "Jane Smith" },
-            ReaderName = new List<string> { "Alice", "Bob", "Charlie" }
-        };
-
-
-        var secondSeed = new Book()
-        {
-            Id = Guid.NewGuid(),
-            Title = "The Future of AI",
-            PublicationDate = new DateTime(2022, 9, 10),
-            Description = "An in-depth analysis of artificial intelligence and its future impact on society.",
-            PageNumber = 450,
-            Price = 29.99,
-            AuthorsName = new List<string> { "Sarah Lee" },
-            ReaderName = new List<string> { "David", "Eve" }
-        };
-
-
-
-        var thirdSeed = new Book()
-        {
-            Id = Guid.NewGuid(),
-            Title = "A Journey Through Time",
-            PublicationDate = new DateTime(2021, 3, 20),
-            Description = "A historical fiction novel that transports readers to different time periods.",
-            PageNumber = 400,
-            Price = 25.99,
-            AuthorsName = new List<string> { "James Brown" },
-            ReaderName = new List<string> { "George", "Hannah" }
-        };
-
-
-
-        var fourthSeed = new Book()
-        {
-            Id = Guid.NewGuid(),
-            Title = "The Art of Cooking",
-            PublicationDate = new DateTime(2019, 11, 5),
-            Description = "A comprehensive guide to cooking with recipes from around the world.",
-            PageNumber = 300,
-            Price = 15.99,
-            AuthorsName = new List<string> { "Anna White" },
-            ReaderName = new List<string> { "Isabella", "Jack", "Liam" }
-        };
-
-
-        ListedBooks.Add(firstSeed);
-        ListedBooks.Add(secondSeed);
-        ListedBooks.Add(thirdSeed);
-        ListedBooks.Add(fourthSeed);
-    }
 }
